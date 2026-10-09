@@ -1,10 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:mysample/data/models/model_produk.dart';
 
+import '../data/dummy/dummy_cart.dart';
+import '../data/models/model_cart.dart';
+
 class DetailProductScreen extends StatelessWidget {
   final Product product;
 
-  const DetailProductScreen({super.key, required this.product});
+  const DetailProductScreen({
+    super.key,
+    required this.product,
+  });
+
+  // =====================================================
+  // TAMBAH PRODUK KE KERANJANG
+  // =====================================================
+  void tambahKeKeranjang(BuildContext context) {
+    bool sudahAda = false;
+
+    // Cek apakah produk sudah ada
+    for (var barang in dataKeranjang) {
+      if (barang.nama == product.name) {
+        // Kalau sudah ada, jumlahnya ditambah
+        barang.jumlah++;
+
+        sudahAda = true;
+
+        break;
+      }
+    }
+
+    // Kalau belum ada, masukkan produk baru
+    if (!sudahAda) {
+      dataKeranjang.add(
+        CartModel(
+          nama: product.name,
+          harga: product.price,
+          gambar: product.image,
+          jumlah: 1,
+        ),
+      );
+    }
+
+    // Tampilkan pesan
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Produk ditambahkan ke keranjang',
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,20 +65,36 @@ class DetailProductScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.black),
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            color: Colors.black,
+          ),
+
           onPressed: () {
             Navigator.pop(context);
           },
         ),
+
         title: const Text(
           'Detail Produk',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
         ),
+
         centerTitle: true,
+
         actions: [
           IconButton(
-            icon: const Icon(Icons.favorite_border, color: Colors.black),
+            icon: const Icon(
+              Icons.favorite_border,
+              color: Colors.black,
+            ),
+
             onPressed: () {},
           ),
         ],
@@ -44,18 +106,24 @@ class DetailProductScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+
           children: [
+
             // =================================================
             // GAMBAR PRODUK
             // =================================================
             Container(
               width: double.infinity,
+
               height: size.height * 0.42,
+
               margin: const EdgeInsets.all(16),
 
               decoration: BoxDecoration(
                 color: Colors.white,
+
                 borderRadius: BorderRadius.circular(28),
+
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.06),
@@ -70,17 +138,28 @@ class DetailProductScreen extends StatelessWidget {
 
                 child: Image.network(
                   product.image,
+
                   fit: BoxFit.cover,
 
-                  loadingBuilder: (context, child, loadingProgress) {
+                  loadingBuilder: (
+                    context,
+                    child,
+                    loadingProgress,
+                  ) {
                     if (loadingProgress == null) {
                       return child;
                     }
 
-                    return const Center(child: CircularProgressIndicator());
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
                   },
 
-                  errorBuilder: (context, error, stackTrace) {
+                  errorBuilder: (
+                    context,
+                    error,
+                    stackTrace,
+                  ) {
                     return const Center(
                       child: Icon(
                         Icons.image_not_supported_outlined,
@@ -98,21 +177,33 @@ class DetailProductScreen extends StatelessWidget {
             // =================================================
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(20, 10, 20, 120),
+
+              padding: const EdgeInsets.fromLTRB(
+                20,
+                10,
+                20,
+                120,
+              ),
 
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
+
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(32),
+                ),
               ),
 
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+
                 children: [
+
                   // -------------------------------
                   // RATING
                   // -------------------------------
                   Row(
                     children: [
+
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 10,
@@ -121,18 +212,29 @@ class DetailProductScreen extends StatelessWidget {
 
                         decoration: BoxDecoration(
                           color: Colors.amber.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(20),
+
+                          borderRadius:
+                              BorderRadius.circular(20),
                         ),
 
                         child: const Row(
                           children: [
-                            Icon(Icons.star, size: 18, color: Colors.amber),
+
+                            Icon(
+                              Icons.star,
+                              size: 18,
+                              color: Colors.amber,
+                            ),
 
                             SizedBox(width: 5),
 
                             Text(
                               '4.8',
-                              style: TextStyle(fontWeight: FontWeight.bold),
+
+                              style: TextStyle(
+                                fontWeight:
+                                    FontWeight.bold,
+                              ),
                             ),
                           ],
                         ),
@@ -142,7 +244,10 @@ class DetailProductScreen extends StatelessWidget {
 
                       const Text(
                         '120 ulasan',
-                        style: TextStyle(color: Colors.grey),
+
+                        style: TextStyle(
+                          color: Colors.grey,
+                        ),
                       ),
                     ],
                   ),
@@ -154,6 +259,7 @@ class DetailProductScreen extends StatelessWidget {
                   // -------------------------------
                   Text(
                     product.name,
+
                     style: const TextStyle(
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
@@ -167,7 +273,8 @@ class DetailProductScreen extends StatelessWidget {
                   // HARGA
                   // -------------------------------
                   Text(
-                    'Rp ${product.price.toStringAsFixed(0)}',
+                    'Rp ${product.price}',
+
                     style: const TextStyle(
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
@@ -180,7 +287,10 @@ class DetailProductScreen extends StatelessWidget {
                   // -------------------------------
                   // GARIS
                   // -------------------------------
-                  Container(height: 1, color: Colors.grey.shade200),
+                  Container(
+                    height: 1,
+                    color: Colors.grey.shade200,
+                  ),
 
                   const SizedBox(height: 24),
 
@@ -189,7 +299,11 @@ class DetailProductScreen extends StatelessWidget {
                   // -------------------------------
                   const Text(
                     'Deskripsi Produk',
-                    style: TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+
+                    style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
 
                   const SizedBox(height: 10),
@@ -199,6 +313,7 @@ class DetailProductScreen extends StatelessWidget {
                     'dan nyaman digunakan. Dibuat dengan material '
                     'pilihan sehingga cocok digunakan untuk '
                     'kebutuhan sehari-hari.',
+
                     style: TextStyle(
                       fontSize: 15,
                       height: 1.6,
@@ -212,11 +327,14 @@ class DetailProductScreen extends StatelessWidget {
                   // ULASAN
                   // -------------------------------
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment:
+                        MainAxisAlignment.spaceBetween,
 
                     children: [
+
                       const Text(
                         'Ulasan Pembeli',
+
                         style: TextStyle(
                           fontSize: 19,
                           fontWeight: FontWeight.bold,
@@ -225,7 +343,10 @@ class DetailProductScreen extends StatelessWidget {
 
                       TextButton(
                         onPressed: () {},
-                        child: const Text('Lihat Semua'),
+
+                        child: const Text(
+                          'Lihat Semua',
+                        ),
                       ),
                     ],
                   ),
@@ -240,31 +361,43 @@ class DetailProductScreen extends StatelessWidget {
 
                     decoration: BoxDecoration(
                       color: const Color(0xFFF7F7F7),
-                      borderRadius: BorderRadius.circular(20),
+
+                      borderRadius:
+                          BorderRadius.circular(20),
                     ),
 
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
 
                       children: [
+
                         Row(
                           children: [
+
                             const CircleAvatar(
                               radius: 22,
-                              child: Icon(Icons.person),
+
+                              child: Icon(
+                                Icons.person,
+                              ),
                             ),
 
                             const SizedBox(width: 12),
 
                             const Expanded(
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
 
                                 children: [
+
                                   Text(
                                     'Ahmad',
+
                                     style: TextStyle(
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight:
+                                          FontWeight.bold,
                                     ),
                                   ),
 
@@ -272,26 +405,31 @@ class DetailProductScreen extends StatelessWidget {
 
                                   Row(
                                     children: [
+
                                       Icon(
                                         Icons.star,
                                         size: 16,
                                         color: Colors.amber,
                                       ),
+
                                       Icon(
                                         Icons.star,
                                         size: 16,
                                         color: Colors.amber,
                                       ),
+
                                       Icon(
                                         Icons.star,
                                         size: 16,
                                         color: Colors.amber,
                                       ),
+
                                       Icon(
                                         Icons.star,
                                         size: 16,
                                         color: Colors.amber,
                                       ),
+
                                       Icon(
                                         Icons.star,
                                         size: 16,
@@ -310,7 +448,11 @@ class DetailProductScreen extends StatelessWidget {
                         const Text(
                           'Produknya bagus dan sesuai dengan '
                           'deskripsi. Pengiriman juga cepat.',
-                          style: TextStyle(height: 1.5, color: Colors.black87),
+
+                          style: TextStyle(
+                            height: 1.5,
+                            color: Colors.black87,
+                          ),
                         ),
                       ],
                     ),
@@ -327,7 +469,12 @@ class DetailProductScreen extends StatelessWidget {
       // =====================================================
       bottomNavigationBar: SafeArea(
         child: Container(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+          padding: const EdgeInsets.fromLTRB(
+            16,
+            12,
+            16,
+            12,
+          ),
 
           decoration: BoxDecoration(
             color: Colors.white,
@@ -343,28 +490,36 @@ class DetailProductScreen extends StatelessWidget {
 
           child: Row(
             children: [
+
               // -------------------------------
               // KERANJANG
               // -------------------------------
               Expanded(
                 child: OutlinedButton.icon(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Produk ditambahkan ke keranjang'),
-                      ),
-                    );
+
+                    // Masukkan produk ke keranjang
+                    tambahKeKeranjang(context);
+
                   },
 
-                  icon: const Icon(Icons.shopping_cart_outlined),
+                  icon: const Icon(
+                    Icons.shopping_cart_outlined,
+                  ),
 
-                  label: const Text('Keranjang'),
+                  label: const Text(
+                    'Keranjang',
+                  ),
 
                   style: OutlinedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 55),
+                    minimumSize: const Size(
+                      double.infinity,
+                      55,
+                    ),
 
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius:
+                          BorderRadius.circular(16),
                     ),
                   ),
                 ),
@@ -378,15 +533,17 @@ class DetailProductScreen extends StatelessWidget {
               Expanded(
                 child: ElevatedButton(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Menuju halaman pembayaran...'),
-                      ),
-                    );
+
+                    // Masukkan produk ke keranjang
+                    tambahKeKeranjang(context);
+
                   },
 
                   style: ElevatedButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 55),
+                    minimumSize: const Size(
+                      double.infinity,
+                      55,
+                    ),
 
                     backgroundColor: Colors.black,
 
@@ -395,13 +552,18 @@ class DetailProductScreen extends StatelessWidget {
                     elevation: 0,
 
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius:
+                          BorderRadius.circular(16),
                     ),
                   ),
 
                   child: const Text(
                     'Beli Sekarang',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
                   ),
                 ),
               ),
@@ -412,4 +574,3 @@ class DetailProductScreen extends StatelessWidget {
     );
   }
 }
-  
